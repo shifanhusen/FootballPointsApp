@@ -21,7 +21,13 @@ public class PointsCalculatorService
             .FirstOrDefaultAsync(m => m.Id == matchId);
 
         if (match == null) throw new ArgumentException("Match not found");
-        if (match.IsFinished) return; // Already calculated? Or maybe allow recalculation? Assuming run once for now.
+        
+        // Clear existing points logs for this match to allow recalculation
+        var existingLogs = await _context.PointsLogs.Where(l => l.MatchId == matchId).ToListAsync();
+        if (existingLogs.Any())
+        {
+            _context.PointsLogs.RemoveRange(existingLogs);
+        }
 
         // We need all players to check for "No response"
         var allPlayers = await _context.Players.Where(p => p.IsActive).ToListAsync();
