@@ -14,7 +14,7 @@
                 <select class="form-select" name="year">
                     @for(int y = DateTime.Now.Year; y >= 2024; y--)
                     {
-                        <option value="@y" @(Model.Year == y ? "selected" : "")>@y</option>
+                        <option value="@y" selected="@(Model.Year == y)">@y</option>
                     }
                 </select>
             </div>
@@ -23,7 +23,7 @@
                 <select class="form-select" name="month">
                     @for(int m = 1; m <= 12; m++)
                     {
-                        <option value="@m" @(Model.Month == m ? "selected" : "")>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)</option>
+                        <option value="@m" selected="@(Model.Month == m)">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)</option>
                     }
                 </select>
             </div>

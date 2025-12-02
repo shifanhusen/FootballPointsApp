@@ -30,8 +30,11 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd ~/football-app
-          # Create a simple environment file if needed or rely on docker-compose defaults
-          # Build and start containers
-          docker compose up -d --build
-          # Prune unused images to save space
+          # Stop existing containers
+          docker compose down
+          # Build with no cache to ensure latest code is used
+          docker compose build --no-cache
+          # Start containers
+          docker compose up -d
+          # Prune unused images
           docker image prune -f
