@@ -1,0 +1,50 @@
+@model IEnumerable<FootballPointsApp.Models.Match>
+
+@{
+    ViewData["Title"] = "Matches";
+}
+
+<h1>Matches</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Match</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Score (A - B)</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.MatchDate.ToShortDateString() @item.MatchDate.ToShortTimeString()</td>
+            <td>@item.Location</td>
+            <td>
+                @if (item.IsFinished)
+                {
+                    <span>@item.TeamAGoals - @item.TeamBGoals</span>
+                }
+                else
+                {
+                    <span>-</span>
+                }
+            </td>
+            <td>@(item.IsFinished ? "Finished" : "Upcoming")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="ManageRsvps" asp-route-matchId="@item.Id">RSVPs</a> |
+                <a asp-action="AssignTeams" asp-route-matchId="@item.Id">Teams</a> |
+                @if (!item.IsFinished)
+                {
+                    <a asp-action="EnterScore" asp-route-matchId="@item.Id">Enter Score</a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,39 @@
+@model FootballPointsApp.ViewModels.EnterScoreViewModel
+
+@{
+    ViewData["Title"] = "Enter Score";
+}
+
+<h1>Enter Score</h1>
+<h4>Match: @Model.MatchDate.ToShortDateString()</h4>
+
+<div class="alert alert-warning">
+    Warning: Saving the score will calculate points for all players and finalize the match.
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EnterScore">
+            <input type="hidden" asp-for="MatchId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="TeamAGoals" class="control-label">Team A Goals</label>
+                <input asp-for="TeamAGoals" class="form-control" />
+                <span asp-validation-for="TeamAGoals" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="TeamBGoals" class="control-label">Team B Goals</label>
+                <input asp-for="TeamBGoals" class="form-control" />
+                <span asp-validation-for="TeamBGoals" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save & Calculate Points" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

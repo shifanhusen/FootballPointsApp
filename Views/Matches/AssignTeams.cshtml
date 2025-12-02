@@ -1,0 +1,46 @@
+@using FootballPointsApp.Models
+@model FootballPointsApp.ViewModels.AssignTeamsViewModel
+
+@{
+    ViewData["Title"] = "Assign Teams";
+}
+
+<h1>Assign Teams</h1>
+<h4>Match: @Model.MatchDate.ToShortDateString()</h4>
+
+<form asp-action="AssignTeams">
+    <input type="hidden" asp-for="MatchId" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Late?</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Players.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.Players[i].PlayerName
+                        <input type="hidden" asp-for="Players[i].PlayerId" />
+                        <input type="hidden" asp-for="Players[i].PlayerName" />
+                    </td>
+                    <td>
+                        <select asp-for="Players[i].Team" class="form-control">
+                            <option value="">Unassigned</option>
+                            <option value="@TeamSide.TeamA">Team A</option>
+                            <option value="@TeamSide.TeamB">Team B</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input asp-for="Players[i].IsLate" class="form-check-input" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save Teams</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

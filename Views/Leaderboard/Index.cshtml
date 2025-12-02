@@ -1,0 +1,43 @@
+@model FootballPointsApp.ViewModels.LeaderboardViewModel
+
+@{
+    ViewData["Title"] = "Leaderboard";
+}
+
+<h1>Leaderboard - @Model.Month/@Model.Year</h1>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-auto">
+        <label for="year" class="visually-hidden">Year</label>
+        <input type="number" class="form-control" name="year" value="@Model.Year" placeholder="Year">
+    </div>
+    <div class="col-auto">
+        <label for="month" class="visually-hidden">Month</label>
+        <input type="number" class="form-control" name="month" value="@Model.Month" placeholder="Month" min="1" max="12">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">Filter</button>
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Matches Played</th>
+            <th>Total Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Entries)
+        {
+            <tr>
+                <td>@item.Rank</td>
+                <td>@item.PlayerName</td>
+                <td>@item.MatchesPlayed</td>
+                <td>@item.TotalPoints</td>
+            </tr>
+        }
+    </tbody>
+</table>

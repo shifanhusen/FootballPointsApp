@@ -1,0 +1,39 @@
+@using FootballPointsApp.Models
+@model FootballPointsApp.ViewModels.ManageRsvpsViewModel
+
+@{
+    ViewData["Title"] = "Manage RSVPs";
+}
+
+<h1>Manage RSVPs</h1>
+<h4>Match: @Model.MatchDate.ToShortDateString()</h4>
+<p>Deadline: @Model.RsvpDeadline</p>
+
+<form asp-action="ManageRsvps">
+    <input type="hidden" asp-for="MatchId" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.PlayerRsvps.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.PlayerRsvps[i].PlayerName
+                        <input type="hidden" asp-for="PlayerRsvps[i].PlayerId" />
+                        <input type="hidden" asp-for="PlayerRsvps[i].PlayerName" />
+                    </td>
+                    <td>
+                        <select asp-for="PlayerRsvps[i].Status" class="form-control" asp-items="Html.GetEnumSelectList<RsvpStatus>()"></select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save RSVPs</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

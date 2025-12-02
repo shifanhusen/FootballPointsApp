@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Football Points App</h1>
+    <p>Welcome to the football points management system.</p>
+    
+    <div class="d-grid gap-2 col-6 mx-auto mt-5">
+        <a asp-controller="Players" asp-action="Index" class="btn btn-outline-primary btn-lg">Manage Players</a>
+        <a asp-controller="Matches" asp-action="Index" class="btn btn-outline-success btn-lg">Manage Matches</a>
+        <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-outline-warning btn-lg">View Leaderboard</a>
+    </div>
+</div>

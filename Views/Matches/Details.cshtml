@@ -1,0 +1,56 @@
+@model FootballPointsApp.Models.Match
+
+@{
+    ViewData["Title"] = "Match Details";
+}
+
+<h1>Match Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.MatchDate)</dt>
+        <dd class = "col-sm-10">@Model.MatchDate</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Location)</dt>
+        <dd class = "col-sm-10">@Model.Location</dd>
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Notes)</dt>
+        <dd class = "col-sm-10">@Model.Notes</dd>
+        <dt class = "col-sm-2">Score</dt>
+        <dd class = "col-sm-10">
+            @if (Model.IsFinished)
+            {
+                <span>Team A: @Model.TeamAGoals - Team B: @Model.TeamBGoals</span>
+            }
+            else
+            {
+                <span>Not finished</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<h4>Teams</h4>
+<div class="row">
+    <div class="col-md-6">
+        <h5>Team A</h5>
+        <ul>
+            @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamA))
+            {
+                <li>@p.Player.Name @(p.IsLate ? "(Late)" : "")</li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h5>Team B</h5>
+        <ul>
+            @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamB))
+            {
+                <li>@p.Player.Name @(p.IsLate ? "(Late)" : "")</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,37 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Copy files via SCP
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: "72.60.42.121"
+        username: "root"
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "."
+        target: "~/football-app"
+        rm: true # Remove existing files in target before copy (optional, but good for clean state)
+
+    - name: Execute remote commands via SSH
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: "72.60.42.121"
+        username: "root"
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/football-app
+          # Create a simple environment file if needed or rely on docker-compose defaults
+          # Build and start containers
+          docker compose up -d --build
+          # Prune unused images to save space
+          docker image prune -f
