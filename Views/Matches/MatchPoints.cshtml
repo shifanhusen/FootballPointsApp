@@ -1,0 +1,59 @@
+@model FootballPointsApp.ViewModels.MatchPointsViewModel
+@inject FootballPointsApp.Services.TimeService TimeService
+
+@{
+    ViewData["Title"] = "Match Points";
+}
+
+<h1>Match Points Breakdown</h1>
+<h4>@TimeService.ToLocal(Model.MatchDate).ToShortDateString() - @Model.Location</h4>
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="py-3 ps-4">Player</th>
+                        <th class="py-3">Team</th>
+                        <th class="py-3 text-center">Late?</th>
+                        <th class="py-3">Points Breakdown</th>
+                        <th class="py-3 pe-4 text-end fw-bold">Total Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PlayerPoints)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-medium">@item.PlayerName</td>
+                            <td>@item.Team</td>
+                            <td class="text-center">
+                                @if (item.IsLate)
+                                {
+                                    <span class="badge bg-danger">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">No</span>
+                                }
+                            </td>
+                            <td>
+                                <ul class="list-unstyled mb-0 small">
+                                    @foreach (var detail in item.PointDetails)
+                                    {
+                                        <li>@detail</li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="pe-4 text-end fw-bold fs-5 text-primary">@item.TotalPoints.ToString("0.#")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Back to Matches</a>
+</div>

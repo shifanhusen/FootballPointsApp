@@ -45,13 +45,14 @@
                         <th class="py-3 ps-4">Rank</th>
                         <th class="py-3">Player</th>
                         <th class="py-3 text-center">Matches</th>
-                        <th class="py-3 text-center" title="Wins"><i class="bi bi-trophy-fill text-warning"></i> W</th>
-                        <th class="py-3 text-center" title="Draws"><i class="bi bi-dash-circle"></i> D</th>
-                        <th class="py-3 text-center" title="Losses"><i class="bi bi-x-circle"></i> L</th>
-                        <th class="py-3 text-center text-danger" title="Late Arrivals"><i class="bi bi-alarm"></i> Late</th>
-                        <th class="py-3 text-center text-danger" title="No Shows"><i class="bi bi-person-x"></i> No-Show</th>
-                        <th class="py-3 text-center text-success" title="Bonus Points"><i class="bi bi-star-fill"></i> Bonus</th>
-                        <th class="py-3 pe-4 text-end fw-bold">Total Points</th>
+                        <th class="py-3 text-center" title="Attendance Points">Att. Pts</th>
+                        <th class="py-3 text-center" title="Result Points (Win/Draw)">Res. Pts</th>
+                        <th class="py-3 text-center" title="Goal Points">Goal Pts</th>
+                        <th class="py-3 text-center" title="Bonus Points">Bonus</th>
+                        <th class="py-3 text-center text-danger" title="Late Penalty">Late</th>
+                        <th class="py-3 text-center text-danger" title="No Show Penalty">No Show</th>
+                        <th class="py-3 text-center text-danger" title="No Response Penalty">No Resp</th>
+                        <th class="py-3 pe-4 text-end fw-bold">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,12 +65,13 @@
                             </td>
                             <td class="fw-medium">@item.PlayerName</td>
                             <td class="text-center">@item.MatchesPlayed</td>
-                            <td class="text-center">@item.Wins</td>
-                            <td class="text-center">@item.Draws</td>
-                            <td class="text-center">@item.Losses</td>
-                            <td class="text-center text-danger">@(item.LateArrivals > 0 ? item.LateArrivals.ToString() : "-")</td>
-                            <td class="text-center text-danger">@(item.NoShows > 0 ? item.NoShows.ToString() : "-")</td>
+                            <td class="text-center">@item.AttendancePoints.ToString("0.#")</td>
+                            <td class="text-center">@item.ResultPoints.ToString("0.#")</td>
+                            <td class="text-center">@item.GoalPoints.ToString("0.#")</td>
                             <td class="text-center text-success">@(item.BonusPoints > 0 ? "+" + item.BonusPoints.ToString("0.#") : "-")</td>
+                            <td class="text-center text-danger">@(item.LatePenaltyPoints < 0 ? item.LatePenaltyPoints.ToString("0.#") : "-")</td>
+                            <td class="text-center text-danger">@(item.NoShowPenaltyPoints < 0 ? item.NoShowPenaltyPoints.ToString("0.#") : "-")</td>
+                            <td class="text-center text-danger">@(item.NoResponsePenaltyPoints < 0 ? item.NoResponsePenaltyPoints.ToString("0.#") : "-")</td>
                             <td class="pe-4 text-end fw-bold fs-5 text-primary">@item.TotalPoints.ToString("0.#")</td>
                         </tr>
                     }

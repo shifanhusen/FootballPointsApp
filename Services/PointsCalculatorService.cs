@@ -82,6 +82,19 @@ public class PointsCalculatorService
                 });
             }
 
+            // Late Arrival Penalty
+            if (mp.IsLate)
+            {
+                _context.PointsLogs.Add(new PointsLog
+                {
+                    PlayerId = mp.PlayerId,
+                    MatchId = match.Id,
+                    Reason = "Late arrival",
+                    PointsChange = -1,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
             // 3. Match Result Points
             int teamAGoals = match.TeamAGoals ?? 0;
             int teamBGoals = match.TeamBGoals ?? 0;

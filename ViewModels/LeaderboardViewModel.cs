@@ -12,11 +12,17 @@ public class LeaderboardEntryDto
     public int Rank { get; set; }
     public string PlayerName { get; set; } = default!;
     public int MatchesPlayed { get; set; }
-    public int Wins { get; set; }
-    public int Draws { get; set; }
-    public int Losses { get; set; }
-    public int LateArrivals { get; set; }
-    public int NoShows { get; set; }
-    public decimal BonusPoints { get; set; }
+    
+    // Detailed Points Breakdown
+    public decimal AttendancePoints { get; set; }
+    public decimal ResultPoints { get; set; } // Win/Draw
+    public decimal GoalPoints { get; set; }
+    public decimal BonusPoints { get; set; } // Monthly bonus etc
+    
+    // Penalties (should be displayed as negative)
+    public decimal LatePenaltyPoints { get; set; }
+    public decimal NoShowPenaltyPoints { get; set; }
+    public decimal NoResponsePenaltyPoints { get; set; }
+    
     public decimal TotalPoints { get; set; }
 }

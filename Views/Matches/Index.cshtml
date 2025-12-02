@@ -39,6 +39,10 @@
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="ManageRsvps" asp-route-matchId="@item.Id">RSVPs</a> |
                 <a asp-action="AssignTeams" asp-route-matchId="@item.Id">Teams</a> |
+                @if (item.IsFinished)
+                {
+                    <a asp-action="MatchPoints" asp-route-matchId="@item.Id">Points</a>
+                }
                 @if (!item.IsFinished)
                 {
                     <a asp-action="EnterScore" asp-route-matchId="@item.Id">Enter Score</a>

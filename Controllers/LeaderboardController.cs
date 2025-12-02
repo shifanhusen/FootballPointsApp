@@ -42,51 +42,38 @@ public class LeaderboardController : Controller
                 PlayerName = g.First().Player.Name,
                 TotalPoints = g.Sum(x => x.PointsChange),
                 MatchesPlayed = g.Where(x => x.MatchId != null && x.Reason == "Attendance").Select(x => x.MatchId).Distinct().Count(),
-                Wins = g.Count(x => x.Reason == "Team win"),
-                Draws = g.Count(x => x.Reason == "Team draw"),
-                // Losses are not explicitly logged as 0 points, so we calculate them: Matches - Wins - Draws
-                // Note: This approximation assumes every match played results in a win, draw, or loss log.
-                // However, "Attendance" is logged for every match played.
-                // Let's count "Attendance" logs as matches played.
-                LateArrivals = g.Count(x => x.Reason.Contains("Late")), // Assuming "Late" is part of the reason string if implemented, or we need to check MatchPlayer.IsLate
-                NoShows = g.Count(x => x.Reason == "No-show after Will attend"),
-                BonusPoints = g.Where(x => x.Reason.Contains("Bonus") || x.Reason.Contains("goals")).Sum(x => x.PointsChange)
+                
+                AttendancePoints = g.Where(x => x.Reason == "Attendance").Sum(x => x.PointsChange),
+                ResultPoints = g.Where(x => x.Reason == "Team win" || x.Reason == "Team draw").Sum(x => x.PointsChange),
+                GoalPoints = g.Where(x => x.Reason == "Team goals scored").Sum(x => x.PointsChange),
+                BonusPoints = g.Where(x => x.Reason.Contains("Bonus")).Sum(x => x.PointsChange),
+                
+                LatePenaltyPoints = g.Where(x => x.Reason == "Late arrival").Sum(x => x.PointsChange),
+                NoShowPenaltyPoints = g.Where(x => x.Reason == "No-show after Will attend").Sum(x => x.PointsChange),
+                NoResponsePenaltyPoints = g.Where(x => x.Reason == "No response before deadline").Sum(x => x.PointsChange)
             })
-            .ToList(); // Materialize first to do complex calculations in memory if needed
+            .ToList();
 
         var entries = new List<LeaderboardEntryDto>();
         
-        // We need to fetch Late info from MatchPlayers because it's not in PointsLog explicitly as "Late" reason usually
-        // Actually, let's check PointsCalculatorService. It doesn't seem to log "Late" penalty explicitly in the snippet I read.
-        // Wait, I need to check if "Late" penalty is logged.
-        // The snippet showed:
-        // if (rsvpStatus == RsvpStatus.WillAttend || rsvpStatus == RsvpStatus.None) -> Attendance +2
-        // It didn't show a "Late" penalty log.
-        // However, MatchPlayer has "IsLate".
-        
-        // To get accurate "Late" counts, we should query MatchPlayers directly for this month.
-        var matchPlayers = await _context.MatchPlayers
-            .Include(mp => mp.Match)
-            .Where(mp => mp.Match.MatchDate >= startOfMonth && mp.Match.MatchDate < endOfMonth)
-            .ToListAsync();
-
         int rank = 1;
         foreach (var item in grouped.OrderByDescending(x => x.TotalPoints))
         {
-            var playerLateCount = matchPlayers.Count(mp => mp.PlayerId == item.PlayerId && mp.IsLate);
-            var losses = item.MatchesPlayed - item.Wins - item.Draws;
-            
             entries.Add(new LeaderboardEntryDto
             {
                 Rank = rank++,
                 PlayerName = item.PlayerName,
                 MatchesPlayed = item.MatchesPlayed,
-                Wins = item.Wins,
-                Draws = item.Draws,
-                Losses = Math.Max(0, losses),
-                LateArrivals = playerLateCount,
-                NoShows = item.NoShows,
+                
+                AttendancePoints = item.AttendancePoints,
+                ResultPoints = item.ResultPoints,
+                GoalPoints = item.GoalPoints,
                 BonusPoints = item.BonusPoints,
+                
+                LatePenaltyPoints = item.LatePenaltyPoints,
+                NoShowPenaltyPoints = item.NoShowPenaltyPoints,
+                NoResponsePenaltyPoints = item.NoResponsePenaltyPoints,
+                
                 TotalPoints = item.TotalPoints
             });
         }

@@ -122,6 +122,45 @@ public class MatchesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // GET: Matches/MatchPoints/5
+    public async Task<IActionResult> MatchPoints(int matchId)
+    {
+        var match = await _context.Matches
+            .Include(m => m.MatchPlayers).ThenInclude(mp => mp.Player)
+            .FirstOrDefaultAsync(m => m.Id == matchId);
+
+        if (match == null) return NotFound();
+
+        var logs = await _context.PointsLogs
+            .Where(l => l.MatchId == matchId)
+            .Include(l => l.Player)
+            .ToListAsync();
+
+        var viewModel = new MatchPointsViewModel
+        {
+            MatchId = match.Id,
+            MatchDate = match.MatchDate,
+            Location = match.Location,
+            PlayerPoints = logs.GroupBy(l => l.PlayerId)
+                .Select(g => {
+                    var player = g.First().Player;
+                    var matchPlayer = match.MatchPlayers.FirstOrDefault(mp => mp.PlayerId == player.Id);
+                    return new MatchPlayerPointsDto
+                    {
+                        PlayerName = player.Name,
+                        Team = matchPlayer != null ? matchPlayer.Team.ToString() : "N/A",
+                        IsLate = matchPlayer?.IsLate ?? false,
+                        TotalPoints = g.Sum(x => x.PointsChange),
+                        PointDetails = g.Select(x => $"{x.Reason}: {x.PointsChange}").ToList()
+                    };
+                })
+                .OrderByDescending(x => x.TotalPoints)
+                .ToList()
+        };
+
+        return View(viewModel);
+    }
+
     // GET: Matches/AssignTeams/5
     public async Task<IActionResult> AssignTeams(int matchId)
     {
