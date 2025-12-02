@@ -20,3 +20,7 @@ Thumbs.db
 
 # Zip archives
 *.zip
+
+# SSH Keys (SECURITY: Never commit these!)
+gh_deploy_key
+gh_deploy_key.pub

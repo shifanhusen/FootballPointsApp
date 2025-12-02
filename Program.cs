@@ -43,7 +43,22 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
+        // Wait for DB to be ready
+        var canConnect = false;
+        for (int i = 0; i < 10; i++)
+        {
+            if (context.Database.CanConnect())
+            {
+                canConnect = true;
+                break;
+            }
+            System.Threading.Thread.Sleep(2000);
+        }
+        
+        if (canConnect)
+        {
+            context.Database.Migrate();
+        }
     }
     catch (Exception ex)
     {

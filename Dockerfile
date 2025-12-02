@@ -17,4 +17,6 @@ RUN dotnet publish "FootballPointsApp.csproj" -c Release -o /app/publish /p:UseA
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Ensure wwwroot exists
+COPY --from=build /src/wwwroot ./wwwroot
 ENTRYPOINT ["dotnet", "FootballPointsApp.dll"]
