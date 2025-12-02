@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register application services
 builder.Services.AddScoped<PointsCalculatorService>();
 builder.Services.AddScoped<MonthlyBonusService>();
+builder.Services.AddSingleton<TimeService>();
 
 var app = builder.Build();
 

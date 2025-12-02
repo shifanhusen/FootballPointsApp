@@ -6,8 +6,8 @@
 }
 
 <h1>Manage RSVPs</h1>
-<h4>Match: @Model.MatchDate.ToShortDateString()</h4>
-<p>Deadline: @Model.RsvpDeadline</p>
+<h4>Match: @TimeService.ToLocal(Model.MatchDate).ToShortDateString() @TimeService.ToLocal(Model.MatchDate).ToShortTimeString()</h4>
+<p>Deadline: @TimeService.ToLocal(Model.RsvpDeadline)</p>
 
 <form asp-action="ManageRsvps">
     <input type="hidden" asp-for="MatchId" />

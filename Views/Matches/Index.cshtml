@@ -22,7 +22,7 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>@item.MatchDate.ToShortDateString() @item.MatchDate.ToShortTimeString()</td>
+            <td>@TimeService.ToLocal(item.MatchDate).ToShortDateString() @TimeService.ToLocal(item.MatchDate).ToShortTimeString()</td>
             <td>@item.Location</td>
             <td>
                 @if (item.IsFinished)

@@ -11,11 +11,13 @@ public class MatchesController : Controller
 {
     private readonly AppDbContext _context;
     private readonly PointsCalculatorService _pointsService;
+    private readonly TimeService _timeService;
 
-    public MatchesController(AppDbContext context, PointsCalculatorService pointsService)
+    public MatchesController(AppDbContext context, PointsCalculatorService pointsService, TimeService timeService)
     {
         _context = context;
         _pointsService = pointsService;
+        _timeService = timeService;
     }
 
     // GET: Matches
@@ -52,6 +54,10 @@ public class MatchesController : Controller
     {
         if (ModelState.IsValid)
         {
+            // Ensure dates are converted from App Timezone to UTC
+            match.MatchDate = _timeService.ToUtc(match.MatchDate);
+            match.RsvpDeadline = _timeService.ToUtc(match.RsvpDeadline);
+
             _context.Add(match);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ManageRsvps), new { matchId = match.Id });

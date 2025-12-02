@@ -10,7 +10,7 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.MatchDate)</dt>
-        <dd class = "col-sm-10">@Model.MatchDate</dd>
+        <dd class = "col-sm-10">@TimeService.ToLocal(Model.MatchDate)</dd>
         <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Location)</dt>
         <dd class = "col-sm-10">@Model.Location</dd>
         <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Notes)</dt>

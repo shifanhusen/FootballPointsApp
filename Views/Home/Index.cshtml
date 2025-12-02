@@ -2,13 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+<div class="hero-section">
     <h1 class="display-4">Football Points App</h1>
-    <p>Welcome to the football points management system.</p>
+    <p>Track matches, manage players, and climb the leaderboard.</p>
     
-    <div class="d-grid gap-2 col-6 mx-auto mt-5">
-        <a asp-controller="Players" asp-action="Index" class="btn btn-outline-primary btn-lg">Manage Players</a>
-        <a asp-controller="Matches" asp-action="Index" class="btn btn-outline-success btn-lg">Manage Matches</a>
-        <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-outline-warning btn-lg">View Leaderboard</a>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <a asp-controller="Matches" asp-action="Index" class="btn btn-light btn-lg px-4">
+            <i class="bi bi-calendar-event"></i> Matches
+        </a>
+        <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+            <i class="bi bi-trophy"></i> Leaderboard
+        </a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <h3 class="card-title mb-3">Players</h3>
+                <p class="card-text text-muted mb-4">Manage your squad, add new players, and update profiles.</p>
+                <a asp-controller="Players" asp-action="Index" class="btn btn-primary">Manage Players</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <h3 class="card-title mb-3">Matches</h3>
+                <p class="card-text text-muted mb-4">Schedule games, track RSVPs, and record match results.</p>
+                <a asp-controller="Matches" asp-action="Index" class="btn btn-primary">View Matches</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <h3 class="card-title mb-3">Leaderboard</h3>
+                <p class="card-text text-muted mb-4">See who's on top with real-time points tracking.</p>
+                <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-primary">Check Standings</a>
+            </div>
+        </div>
     </div>
 </div>
