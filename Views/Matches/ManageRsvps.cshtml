@@ -1,39 +1,64 @@
 @using FootballPointsApp.Models
 @model FootballPointsApp.ViewModels.ManageRsvpsViewModel
+@inject FootballPointsApp.Services.TimeService TimeService
 
 @{
     ViewData["Title"] = "Manage RSVPs";
 }
 
-<h1>Manage RSVPs</h1>
-<h4>Match: @TimeService.ToLocal(Model.MatchDate).ToShortDateString() @TimeService.ToLocal(Model.MatchDate).ToShortTimeString()</h4>
-<p>Deadline: @TimeService.ToLocal(Model.RsvpDeadline)</p>
+<div class="max-w-4xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-secondary">Manage RSVPs</h1>
+        <div class="mt-2 flex flex-col sm:flex-row sm:items-center text-gray-600 gap-4">
+            <div class="flex items-center">
+                <i class="bi bi-calendar-event mr-2"></i>
+                @TimeService.ToLocal(Model.MatchDate).ToShortDateString() @TimeService.ToLocal(Model.MatchDate).ToShortTimeString()
+            </div>
+            <div class="flex items-center text-red-600">
+                <i class="bi bi-clock-history mr-2"></i>
+                Deadline: @TimeService.ToLocal(Model.RsvpDeadline)
+            </div>
+        </div>
+    </div>
 
-<form asp-action="ManageRsvps">
-    <input type="hidden" asp-for="MatchId" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.PlayerRsvps.Count; i++)
-            {
-                <tr>
-                    <td>
-                        @Model.PlayerRsvps[i].PlayerName
-                        <input type="hidden" asp-for="PlayerRsvps[i].PlayerId" />
-                        <input type="hidden" asp-for="PlayerRsvps[i].PlayerName" />
-                    </td>
-                    <td>
-                        <select asp-for="PlayerRsvps[i].Status" class="form-control" asp-items="Html.GetEnumSelectList<RsvpStatus>()"></select>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button type="submit" class="btn btn-primary">Save RSVPs</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <form asp-action="ManageRsvps">
+            <input type="hidden" asp-for="MatchId" />
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RSVP Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (int i = 0; i < Model.PlayerRsvps.Count; i++)
+                        {
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    @Model.PlayerRsvps[i].PlayerName
+                                    <input type="hidden" asp-for="PlayerRsvps[i].PlayerId" />
+                                    <input type="hidden" asp-for="PlayerRsvps[i].PlayerName" />
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <select asp-for="PlayerRsvps[i].Status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md" asp-items="Html.GetEnumSelectList<RsvpStatus>()"></select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
+                    Save RSVPs
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

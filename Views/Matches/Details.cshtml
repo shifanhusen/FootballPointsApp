@@ -1,56 +1,101 @@
 @model FootballPointsApp.Models.Match
+@inject FootballPointsApp.Services.TimeService TimeService
 
 @{
     ViewData["Title"] = "Match Details";
 }
 
-<h1>Match Details</h1>
-
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.MatchDate)</dt>
-        <dd class = "col-sm-10">@TimeService.ToLocal(Model.MatchDate)</dd>
-        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Location)</dt>
-        <dd class = "col-sm-10">@Model.Location</dd>
-        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Notes)</dt>
-        <dd class = "col-sm-10">@Model.Notes</dd>
-        <dt class = "col-sm-2">Score</dt>
-        <dd class = "col-sm-10">
-            @if (Model.IsFinished)
-            {
-                <span>Team A: @Model.TeamAGoals - Team B: @Model.TeamBGoals</span>
-            }
-            else
-            {
-                <span>Not finished</span>
-            }
-        </dd>
-    </dl>
-</div>
-
-<h4>Teams</h4>
-<div class="row">
-    <div class="col-md-6">
-        <h5>Team A</h5>
-        <ul>
-            @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamA))
-            {
-                <li>@p.Player.Name @(p.IsLate ? "(Late)" : "")</li>
-            }
-        </ul>
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Match Details</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">Match information and teams.</p>
+            </div>
+            <span class="@(Model.IsFinished ? "bg-gray-100 text-gray-800" : "bg-green-100 text-green-800") px-3 py-1 rounded-full text-sm font-semibold">
+                @(Model.IsFinished ? "Finished" : "Upcoming")
+            </span>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Date & Time</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">@TimeService.ToLocal(Model.MatchDate).ToString("f")</dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Location</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">@Model.Location</dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Notes</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">@Model.Notes</dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Score</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-bold text-lg">
+                        @if (Model.IsFinished)
+                        {
+                            <span class="text-primary">Team A: @Model.TeamAGoals</span> <span class="mx-2 text-gray-400">vs</span> <span class="text-secondary">Team B: @Model.TeamBGoals</span>
+                        }
+                        else
+                        {
+                            <span class="text-gray-400">Not finished</span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
     </div>
-    <div class="col-md-6">
-        <h5>Team B</h5>
-        <ul>
-            @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamB))
-            {
-                <li>@p.Player.Name @(p.IsLate ? "(Late)" : "")</li>
-            }
-        </ul>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-4 py-3 bg-primary text-white font-bold text-center">
+                Team A
+            </div>
+            <ul class="divide-y divide-gray-200">
+                @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamA))
+                {
+                    <li class="px-4 py-3 flex justify-between items-center hover:bg-gray-50">
+                        <span class="font-medium text-gray-900">@p.Player.Name</span>
+                        @if (p.IsLate)
+                        {
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Late</span>
+                        }
+                    </li>
+                }
+                @if (!Model.MatchPlayers.Any(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamA))
+                {
+                    <li class="px-4 py-3 text-gray-500 text-center italic">No players assigned</li>
+                }
+            </ul>
+        </div>
+
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-4 py-3 bg-secondary text-white font-bold text-center">
+                Team B
+            </div>
+            <ul class="divide-y divide-gray-200">
+                @foreach (var p in Model.MatchPlayers.Where(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamB))
+                {
+                    <li class="px-4 py-3 flex justify-between items-center hover:bg-gray-50">
+                        <span class="font-medium text-gray-900">@p.Player.Name</span>
+                        @if (p.IsLate)
+                        {
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Late</span>
+                        }
+                    </li>
+                }
+                @if (!Model.MatchPlayers.Any(mp => mp.Team == FootballPointsApp.Models.TeamSide.TeamB))
+                {
+                    <li class="px-4 py-3 text-gray-500 text-center italic">No players assigned</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="flex justify-start">
+        <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <i class="bi bi-arrow-left mr-2"></i> Back to List
+        </a>
+    </div>
 </div>

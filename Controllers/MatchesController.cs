@@ -276,4 +276,20 @@ public class MatchesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    // POST: Matches/RecalculatePoints
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RecalculatePoints(int matchId)
+    {
+        var match = await _context.Matches.FindAsync(matchId);
+        if (match == null) return NotFound();
+        
+        if (match.IsFinished)
+        {
+            await _pointsService.CalculateAndPersistPointsForMatchAsync(matchId);
+        }
+
+        return RedirectToAction(nameof(MatchPoints), new { matchId = matchId });
+    }
 }

@@ -2,46 +2,57 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="hero-section">
-    <h1 class="display-4">Football Points App</h1>
-    <p>Track matches, manage players, and climb the leaderboard.</p>
+<div class="bg-primary text-white py-20 px-6 text-center rounded-xl shadow-lg mb-12">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">Football Points App</h1>
+    <p class="text-xl md:text-2xl opacity-90 mb-8">Track matches, manage players, and climb the leaderboard.</p>
     
-    <div class="d-flex justify-content-center gap-3 mt-4">
-        <a asp-controller="Matches" asp-action="Index" class="btn btn-light btn-lg px-4">
-            <i class="bi bi-calendar-event"></i> Matches
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a asp-controller="Matches" asp-action="Index" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 md:text-lg transition-colors">
+            <i class="bi bi-calendar-event mr-2"></i> Matches
         </a>
-        <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
-            <i class="bi bi-trophy"></i> Leaderboard
+        <a asp-controller="Leaderboard" asp-action="Index" class="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary md:text-lg transition-colors">
+            <i class="bi bi-trophy mr-2"></i> Leaderboard
         </a>
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body text-center p-4">
-                <h3 class="card-title mb-3">Players</h3>
-                <p class="card-text text-muted mb-4">Manage your squad, add new players, and update profiles.</p>
-                <a asp-controller="Players" asp-action="Index" class="btn btn-primary">Manage Players</a>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+        <div class="p-8 text-center h-full flex flex-col">
+            <div class="text-primary text-5xl mb-4">
+                <i class="bi bi-people"></i>
             </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Players</h3>
+            <p class="text-gray-600 mb-6 flex-grow">Manage your squad, add new players, and update profiles.</p>
+            <a asp-controller="Players" asp-action="Index" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary w-full">
+                Manage Players
+            </a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body text-center p-4">
-                <h3 class="card-title mb-3">Matches</h3>
-                <p class="card-text text-muted mb-4">Schedule games, track RSVPs, and record match results.</p>
-                <a asp-controller="Matches" asp-action="Index" class="btn btn-primary">View Matches</a>
+
+    <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+        <div class="p-8 text-center h-full flex flex-col">
+            <div class="text-primary text-5xl mb-4">
+                <i class="bi bi-calendar-check"></i>
             </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Matches</h3>
+            <p class="text-gray-600 mb-6 flex-grow">Schedule games, track RSVPs, and record match results.</p>
+            <a asp-controller="Matches" asp-action="Index" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary w-full">
+                View Matches
+            </a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body text-center p-4">
-                <h3 class="card-title mb-3">Leaderboard</h3>
-                <p class="card-text text-muted mb-4">See who's on top with real-time points tracking.</p>
-                <a asp-controller="Leaderboard" asp-action="Index" class="btn btn-primary">Check Standings</a>
+
+    <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+        <div class="p-8 text-center h-full flex flex-col">
+            <div class="text-primary text-5xl mb-4">
+                <i class="bi bi-graph-up"></i>
             </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Leaderboard</h3>
+            <p class="text-gray-600 mb-6 flex-grow">See who's on top with real-time points tracking.</p>
+            <a asp-controller="Leaderboard" asp-action="Index" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary w-full">
+                Check Standings
+            </a>
         </div>
     </div>
 </div>

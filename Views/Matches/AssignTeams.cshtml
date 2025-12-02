@@ -5,42 +5,60 @@
     ViewData["Title"] = "Assign Teams";
 }
 
-<h1>Assign Teams</h1>
-<h4>Match: @Model.MatchDate.ToShortDateString()</h4>
+<div class="max-w-4xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-secondary">Assign Teams</h1>
+        <p class="text-gray-600">Match Date: @Model.MatchDate.ToShortDateString()</p>
+    </div>
 
-<form asp-action="AssignTeams">
-    <input type="hidden" asp-for="MatchId" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Team</th>
-                <th>Late?</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Players.Count; i++)
-            {
-                <tr>
-                    <td>
-                        @Model.Players[i].PlayerName
-                        <input type="hidden" asp-for="Players[i].PlayerId" />
-                        <input type="hidden" asp-for="Players[i].PlayerName" />
-                    </td>
-                    <td>
-                        <select asp-for="Players[i].Team" class="form-control">
-                            <option value="">Unassigned</option>
-                            <option value="@TeamSide.TeamA">Team A</option>
-                            <option value="@TeamSide.TeamB">Team B</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input asp-for="Players[i].IsLate" class="form-check-input" />
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button type="submit" class="btn btn-primary">Save Teams</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <form asp-action="AssignTeams">
+            <input type="hidden" asp-for="MatchId" />
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team Assignment</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Late Arrival?</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (int i = 0; i < Model.Players.Count; i++)
+                        {
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    @Model.Players[i].PlayerName
+                                    <input type="hidden" asp-for="Players[i].PlayerId" />
+                                    <input type="hidden" asp-for="Players[i].PlayerName" />
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <select asp-for="Players[i].Team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                                        <option value="">Unassigned</option>
+                                        <option value="@TeamSide.TeamA">Team A</option>
+                                        <option value="@TeamSide.TeamB">Team B</option>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <div class="flex justify-center">
+                                        <input asp-for="Players[i].IsLate" class="focus:ring-primary h-5 w-5 text-primary border-gray-300 rounded" type="checkbox" />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
+                    Save Teams
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

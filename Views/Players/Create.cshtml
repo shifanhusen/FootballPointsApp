@@ -4,30 +4,39 @@
     ViewData["Title"] = "Create Player";
 }
 
-<h1>Create Player</h1>
-
-<div class="row">
-    <div class="col-md-4">
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-6 py-4 bg-primary border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Add New Player</h2>
+    </div>
+    
+    <div class="p-6">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly" class="text-red-600 text-sm mb-4"></div>
+            
+            <div class="mb-4">
+                <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input asp-for="Name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. John Doe" />
+                <span asp-validation-for="Name" class="text-red-600 text-xs mt-1"></span>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="Nickname" class="control-label"></label>
-                <input asp-for="Nickname" class="form-control" />
-                <span asp-validation-for="Nickname" class="text-danger"></span>
+            
+            <div class="mb-4">
+                <label asp-for="Nickname" class="block text-sm font-medium text-gray-700 mb-1">Nickname (Optional)</label>
+                <input asp-for="Nickname" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="e.g. Johnny" />
+                <span asp-validation-for="Nickname" class="text-red-600 text-xs mt-1"></span>
             </div>
-            <div class="form-group form-check mb-3">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                </label>
+            
+            <div class="mb-6">
+                <div class="flex items-center">
+                    <input asp-for="IsActive" class="focus:ring-primary h-4 w-4 text-primary border-gray-300 rounded" />
+                    <label asp-for="IsActive" class="ml-2 block text-sm text-gray-900">
+                        Active Player
+                    </label>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            
+            <div class="flex items-center justify-between">
+                <a asp-action="Index" class="text-sm text-gray-600 hover:text-gray-900 font-medium">Cancel</a>
+                <input type="submit" value="Add Player" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer" />
             </div>
         </form>
     </div>
