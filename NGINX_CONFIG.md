@@ -1,75 +1,51 @@
 # Nginx Configuration for FutPoints
 
-## Problem
-Your app runs on `72.60.42.121:5000` but is accessed via `http://innovitecho.cloud/futpoints`.
-Nginx needs to strip the `/futpoints` prefix before forwarding requests to your application.
+This app is hosted under the subpath `/futpoints`. ASP.NET Core is configured with `UsePathBase("/futpoints")`, so nginx must preserve the `/futpoints` prefix when proxying to the app. Do not rewrite or strip the prefix.
 
-## Solution
+## Recommended Config
 
-Update your nginx configuration file (usually at `/etc/nginx/sites-available/innovitecho.cloud`):
+Edit `/etc/nginx/sites-available/innovitecho.cloud` (or your vhost):
 
 ```nginx
 server {
     listen 80;
     server_name innovitecho.cloud www.innovitecho.cloud;
 
-    # FutPoints application
-    location /futpoints/ {
-        # Strip the /futpoints prefix before proxying
-        rewrite ^/futpoints/(.*)$ /$1 break;
-        
-        proxy_pass http://72.60.42.121:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection keep-alive;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-        
-        # Handle root path /futpoints (without trailing slash)
-        # This ensures /futpoints redirects to /futpoints/
+    # Redirect root to the app subpath
+    location = / {
+        return 302 /futpoints/;
     }
-    
-    # Handle exact /futpoints to redirect to /futpoints/
-    location = /futpoints {
-        return 301 /futpoints/;
+
+    # Optional: redirect common app routes at root to the subpath
+    location ~ ^/(Players|Matches|Leaderboard|Account|Home)(/.*)?$ {
+        return 302 /futpoints$uri$is_args$args;
     }
-}
-```
 
-## Alternative Configuration (Recommended)
-
-If the above doesn't work perfectly, use this more explicit configuration:
-
-```nginx
-server {
-    listen 80;
-    server_name innovitecho.cloud www.innovitecho.cloud;
-
+    # Proxy the app under /futpoints and PRESERVE the prefix
+    # Note: no trailing slash in proxy_pass (so the URI is kept)
     location /futpoints {
-        # Remove /futpoints prefix and forward to backend
-        proxy_pass http://72.60.42.121:5000/;
+        proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;
-        
-        # Important headers for ASP.NET Core
+
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Prefix /futpoints;
-        
-        # WebSocket support (if needed in future)
+
+        # WebSocket support (if needed)
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-        
-        proxy_cache_bypass $http_upgrade;
+
         proxy_redirect off;
+        proxy_cache_bypass $http_upgrade;
     }
 }
 ```
+
+Why this works:
+- Keeping the `/futpoints` path allows ASP.NET Core to set `Request.PathBase` correctly via `UsePathBase`, which makes all tag helpers and `~/` paths generate URLs with the prefix.
+- The root and convenience redirects avoid 404s when users visit `innovitecho.cloud/Players` or just the domain root.
 
 ## How to Apply
 
@@ -99,10 +75,10 @@ After applying the config, test these URLs:
 ## Troubleshooting
 
 ### Issue: 404 errors on all pages
-**Solution:** Make sure nginx is stripping the `/futpoints` prefix with the `rewrite` rule.
+**Solution:** Ensure nginx is NOT stripping the `/futpoints` prefix. Use `proxy_pass http://127.0.0.1:5000;` (no trailing slash) and no `rewrite`.
 
 ### Issue: CSS/JS not loading
-**Solution:** The `rewrite` rule handles this. Nginx strips `/futpoints` from all requests.
+**Solution:** Preserve the prefix and set `X-Forwarded-Prefix /futpoints`. ASP.NET Core generates correct asset URLs when `PathBase` is set.
 
 ### Issue: Redirects go to wrong URL
 **Solution:** Add `proxy_redirect off;` in the nginx config.
@@ -123,38 +99,35 @@ curl http://72.60.42.121:5000
 Here's a complete nginx config including SSL (if you have a certificate):
 
 ```nginx
-# Redirect HTTP to HTTPS
+# Redirect HTTP to HTTPS (if using TLS)
 server {
     listen 80;
     server_name innovitecho.cloud www.innovitecho.cloud;
     return 301 https://$server_name$request_uri;
 }
 
-# HTTPS server
 server {
     listen 443 ssl http2;
     server_name innovitecho.cloud www.innovitecho.cloud;
 
-    # SSL configuration (if you have certificates)
     # ssl_certificate /path/to/cert.pem;
     # ssl_certificate_key /path/to/key.pem;
 
-    # FutPoints application
+    location = / { return 302 /futpoints/; }
+    location ~ ^/(Players|Matches|Leaderboard|Account|Home)(/.*)?$ { return 302 /futpoints$uri$is_args$args; }
+
     location /futpoints {
-        rewrite ^/futpoints/(.*)$ /$1 break;
-        
-        proxy_pass http://72.60.42.121:5000;
+        proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Prefix /futpoints;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
         proxy_redirect off;
-    }
-    
-    location = /futpoints {
-        return 301 /futpoints/;
+        proxy_cache_bypass $http_upgrade;
     }
 }
 ```

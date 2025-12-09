@@ -42,17 +42,6 @@ var pathBase = builder.Configuration["PathBase"];
 if (!string.IsNullOrEmpty(pathBase))
 {
     app.UsePathBase(pathBase);
-    // Redirect requests that arrive without the PathBase prefix to the prefixed URL
-    app.Use(async (context, next) =>
-    {
-        if (!context.Request.Path.StartsWithSegments(pathBase, StringComparison.OrdinalIgnoreCase))
-        {
-            var newPath = pathBase + context.Request.Path + context.Request.QueryString;
-            context.Response.Redirect(newPath, permanent: false);
-            return;
-        }
-        await next();
-    });
 }
 
 // Configure the HTTP request pipeline.
