@@ -7,9 +7,12 @@
 
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-secondary">Matches</h1>
-    <a asp-action="Create" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
-        <i class="bi bi-plus-lg mr-2"></i> Create New Match
-    </a>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <a asp-action="Create" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
+            <i class="bi bi-plus-lg mr-2"></i> Create New Match
+        </a>
+    }
 </div>
 
 <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -56,13 +59,16 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                             <a asp-action="Details" asp-route-id="@item.Id" class="text-primary hover:text-primary-dark" title="Details"><i class="bi bi-info-circle"></i></a>
-                            <a asp-action="ManageRsvps" asp-route-matchId="@item.Id" class="text-indigo-600 hover:text-indigo-900" title="RSVPs"><i class="bi bi-people"></i></a>
-                            <a asp-action="AssignTeams" asp-route-matchId="@item.Id" class="text-blue-600 hover:text-blue-900" title="Teams"><i class="bi bi-shield-shaded"></i></a>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-action="ManageRsvps" asp-route-matchId="@item.Id" class="text-indigo-600 hover:text-indigo-900" title="RSVPs"><i class="bi bi-people"></i></a>
+                                <a asp-action="AssignTeams" asp-route-matchId="@item.Id" class="text-blue-600 hover:text-blue-900" title="Teams"><i class="bi bi-shield-shaded"></i></a>
+                            }
                             @if (item.IsFinished)
                             {
                                 <a asp-action="MatchPoints" asp-route-matchId="@item.Id" class="text-green-600 hover:text-green-900" title="Points"><i class="bi bi-bar-chart"></i></a>
                             }
-                            @if (!item.IsFinished)
+                            @if (!item.IsFinished && User.Identity?.IsAuthenticated == true)
                             {
                                 <a asp-action="EnterScore" asp-route-matchId="@item.Id" class="text-orange-600 hover:text-orange-900" title="Enter Score"><i class="bi bi-pencil-square"></i></a>
                             }

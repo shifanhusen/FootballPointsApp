@@ -28,6 +28,7 @@ public class PlayersController : Controller
         return View(players);
     }
 
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public IActionResult Create()
     {
         return View();
@@ -35,6 +36,7 @@ public class PlayersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> Create(Player player)
     {
         if (ModelState.IsValid)
@@ -46,6 +48,7 @@ public class PlayersController : Controller
         return View(player);
     }
 
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -57,6 +60,7 @@ public class PlayersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> Edit(int id, Player player)
     {
         if (id != player.Id) return NotFound();

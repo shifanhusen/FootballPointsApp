@@ -42,6 +42,7 @@ public class MatchesController : Controller
     }
 
     // GET: Matches/Create
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public IActionResult Create()
     {
         return View();
@@ -50,6 +51,7 @@ public class MatchesController : Controller
     // POST: Matches/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> Create([Bind("Id,MatchDate,Location,Notes,RsvpDeadline")] Match match)
     {
         if (ModelState.IsValid)
@@ -66,6 +68,7 @@ public class MatchesController : Controller
     }
 
     // GET: Matches/ManageRsvps/5
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> ManageRsvps(int matchId)
     {
         var match = await _context.Matches
@@ -95,6 +98,7 @@ public class MatchesController : Controller
     // POST: Matches/ManageRsvps
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> ManageRsvps(ManageRsvpsViewModel model)
     {
         var match = await _context.Matches.Include(m => m.MatchRsvps).FirstOrDefaultAsync(m => m.Id == model.MatchId);
@@ -162,6 +166,7 @@ public class MatchesController : Controller
     }
 
     // GET: Matches/AssignTeams/5
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> AssignTeams(int matchId)
     {
         var match = await _context.Matches
@@ -197,6 +202,7 @@ public class MatchesController : Controller
     // POST: Matches/AssignTeams
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> AssignTeams(AssignTeamsViewModel model)
     {
         var match = await _context.Matches.Include(m => m.MatchPlayers).FirstOrDefaultAsync(m => m.Id == model.MatchId);
@@ -243,6 +249,7 @@ public class MatchesController : Controller
     }
 
     // GET: Matches/EnterScore/5
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> EnterScore(int matchId)
     {
         var match = await _context.Matches.FindAsync(matchId);
@@ -261,6 +268,7 @@ public class MatchesController : Controller
     // POST: Matches/EnterScore
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> EnterScore(EnterScoreViewModel model)
     {
         var match = await _context.Matches.FindAsync(model.MatchId);
@@ -280,6 +288,7 @@ public class MatchesController : Controller
     // POST: Matches/RecalculatePoints
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public async Task<IActionResult> RecalculatePoints(int matchId)
     {
         var match = await _context.Matches.FindAsync(matchId);

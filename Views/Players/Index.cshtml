@@ -6,9 +6,12 @@
 
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-secondary">Players</h1>
-    <a asp-action="Create" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
-        <i class="bi bi-person-plus mr-2"></i> Add Player
-    </a>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <a asp-action="Create" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm">
+            <i class="bi bi-person-plus mr-2"></i> Add Player
+        </a>
+    }
 </div>
 
 <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -46,7 +49,14 @@
                             @item.PointsLogs.Sum(p => p.PointsChange).ToString("0.#")
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-900"><i class="bi bi-pencil"></i> Edit</a>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-900"><i class="bi bi-pencil"></i> Edit</a>
+                            }
+                            else
+                            {
+                                <span class="text-gray-400">-</span>
+                            }
                         </td>
                     </tr>
                 }

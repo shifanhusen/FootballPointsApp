@@ -37,11 +37,25 @@
                 </button>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-6">
+                <div class="hidden md:flex space-x-6 items-center">
                     <a class="text-slate-300 hover:text-white font-medium transition-colors" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     <a class="text-slate-300 hover:text-white font-medium transition-colors" asp-area="" asp-controller="Players" asp-action="Index">Players</a>
                     <a class="text-slate-300 hover:text-white font-medium transition-colors" asp-area="" asp-controller="Matches" asp-action="Index">Matches</a>
                     <a class="text-slate-300 hover:text-white font-medium transition-colors" asp-area="" asp-controller="Leaderboard" asp-action="Index">Leaderboard</a>
+                    
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <span class="text-slate-400 px-2">|</span>
+                        <span class="text-white font-semibold"><i class="bi bi-shield-check"></i> Admin</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                            <button type="submit" class="text-slate-300 hover:text-white font-medium transition-colors">Logout</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-slate-400 px-2">|</span>
+                        <a class="text-slate-300 hover:text-white font-medium transition-colors" asp-controller="Account" asp-action="Login"><i class="bi bi-shield-lock"></i> Admin</a>
+                    }
                 </div>
             </div>
             
@@ -51,6 +65,21 @@
                 <a class="block text-slate-300 hover:text-white py-2" asp-area="" asp-controller="Players" asp-action="Index">Players</a>
                 <a class="block text-slate-300 hover:text-white py-2" asp-area="" asp-controller="Matches" asp-action="Index">Matches</a>
                 <a class="block text-slate-300 hover:text-white py-2" asp-area="" asp-controller="Leaderboard" asp-action="Index">Leaderboard</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="border-t border-slate-700 pt-2 mt-2">
+                        <span class="block text-white font-semibold py-2"><i class="bi bi-shield-check"></i> Admin</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="block text-slate-300 hover:text-white py-2">Logout</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="border-t border-slate-700 pt-2 mt-2">
+                        <a class="block text-slate-300 hover:text-white py-2" asp-controller="Account" asp-action="Login"><i class="bi bi-shield-lock"></i> Admin Login</a>
+                    </div>
+                }
             </div>
         </nav>
     </header>

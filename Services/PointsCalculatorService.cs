@@ -41,7 +41,8 @@ public class PointsCalculatorService
 
             // If a player has no RSVP (Status == None) before the deadline
             // Note: We assume this calculation happens AFTER the match, so definitely after deadline.
-            if (rsvpStatus == RsvpStatus.None)
+            // FIX: Only penalize for No Response if they also DID NOT play. If they played, they get attendance points instead.
+            if (rsvpStatus == RsvpStatus.None && !played)
             {
                 _context.PointsLogs.Add(new PointsLog
                 {
