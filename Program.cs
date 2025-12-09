@@ -30,6 +30,13 @@ builder.Services.AddSingleton<TimeService>();
 
 var app = builder.Build();
 
+// Configure path base for subdirectory deployment
+var pathBase = builder.Configuration["PathBase"];
+if (!string.IsNullOrEmpty(pathBase))
+{
+    app.UsePathBase(pathBase);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
