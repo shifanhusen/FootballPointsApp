@@ -10,8 +10,8 @@ services:
       - "5000:8080"
     environment:
       # Use the shared PostgreSQL container on the shared network
-      - ConnectionStrings__DefaultConnection=Host=shared-postgres;Port=5432;Database=football_db;Username=postgres;Password=StrongPass123!
-      - ASPNETCORE_URLS=http://+:8080
+      ConnectionStrings__DefaultConnection: "Host=shared-postgres;Port=5432;Database=football_db;Username=postgres;Password=StrongPass123!"
+      ASPNETCORE_URLS: "http://+:8080"
     # Do not depend_on the local db service when using the shared Postgres
     networks:
       - shared-net
