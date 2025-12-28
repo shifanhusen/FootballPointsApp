@@ -109,29 +109,48 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
+        
+        logger.LogInformation("Testing database connection...");
+        var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+        logger.LogInformation($"Connection string (masked): Host={new Npgsql.NpgsqlConnectionStringBuilder(connString).Host}, Database={new Npgsql.NpgsqlConnectionStringBuilder(connString).Database}");
+        
         // Wait for DB to be ready
         var canConnect = false;
         for (int i = 0; i < 10; i++)
         {
-            if (context.Database.CanConnect())
+            try
             {
-                canConnect = true;
-                break;
+                if (context.Database.CanConnect())
+                {
+                    canConnect = true;
+                    logger.LogInformation("Database connection successful!");
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Connection attempt {i + 1}/10 failed: {ex.Message}");
             }
             System.Threading.Thread.Sleep(2000);
         }
         
         if (canConnect)
         {
+            logger.LogInformation("Applying migrations...");
             context.Database.Migrate();
+            logger.LogInformation("Migrations applied successfully.");
+        }
+        else
+        {
+            logger.LogError("Could not connect to database after 10 attempts.");
         }
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while migrating the database.");
     }
 }
