@@ -137,43 +137,43 @@ finalLogger.LogWarning("=== ROUTING CONFIGURED, STARTING APPLICATION ===");
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
+    var migrationLogger = services.GetRequiredService<ILogger<Program>>();
     
-    logger.LogWarning("=== DATABASE MIGRATION STARTING ===");
+    migrationLogger.LogWarning("=== DATABASE MIGRATION STARTING ===");
     
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
         
-        logger.LogWarning("DbContext created successfully");
+        migrationLogger.LogWarning("DbContext created successfully");
         
-        var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-        logger.LogWarning($"Using connection string: {connString?.Substring(0, Math.Min(50, connString?.Length ?? 0))}...");
+        var dbConnString = builder.Configuration.GetConnectionString("DefaultConnection");
+        migrationLogger.LogWarning($"Using connection string: {dbConnString?.Substring(0, Math.Min(50, dbConnString?.Length ?? 0))}...");
         
         // Wait for DB to be ready
         var canConnect = false;
         for (int i = 0; i < 10; i++)
         {
-            logger.LogWarning($"Connection attempt {i + 1}/10...");
+            migrationLogger.LogWarning($"Connection attempt {i + 1}/10...");
             try
             {
                 if (context.Database.CanConnect())
                 {
                     canConnect = true;
-                    logger.LogWarning("✓ Database connection SUCCESSFUL!");
+                    migrationLogger.LogWarning("✓ Database connection SUCCESSFUL!");
                     break;
                 }
                 else
                 {
-                    logger.LogWarning($"CanConnect returned false on attempt {i + 1}");
+                    migrationLogger.LogWarning($"CanConnect returned false on attempt {i + 1}");
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"✗ Connection attempt {i + 1}/10 FAILED: {ex.Message}");
+                migrationLogger.LogError(ex, $"✗ Connection attempt {i + 1}/10 FAILED: {ex.Message}");
                 if (ex.InnerException != null)
                 {
-                    logger.LogError($"Inner exception: {ex.InnerException.Message}");
+                    migrationLogger.LogError($"Inner exception: {ex.InnerException.Message}");
                 }
             }
             System.Threading.Thread.Sleep(2000);
@@ -181,30 +181,29 @@ using (var scope = app.Services.CreateScope())
         
         if (canConnect)
         {
-            logger.LogWarning("Applying migrations...");
+            migrationLogger.LogWarning("Applying migrations...");
             context.Database.Migrate();
-            logger.LogWarning("✓ Migrations applied successfully!");
+            migrationLogger.LogWarning("✓ Migrations applied successfully!");
         }
         else
         {
-            logger.LogError("✗✗✗ Could not connect to database after 10 attempts ✗✗✗");
+            migrationLogger.LogError("✗✗✗ Could not connect to database after 10 attempts ✗✗✗");
         }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "✗✗✗ FATAL ERROR during database migration ✗✗✗");
-        logger.LogError($"Exception type: {ex.GetType().Name}");
-        logger.LogError($"Message: {ex.Message}");
+        migrationLogger.LogError(ex, "✗✗✗ FATAL ERROR during database migration ✗✗✗");
+        migrationLogger.LogError($"Exception type: {ex.GetType().Name}");
+        migrationLogger.LogError($"Message: {ex.Message}");
         if (ex.InnerException != null)
         {
-            logger.LogError($"Inner exception: {ex.InnerException.Message}");
+            migrationLogger.LogError($"Inner exception: {ex.InnerException.Message}");
         }
-        logger.LogError($"Stack trace: {ex.StackTrace}");
+        migrationLogger.LogError($"Stack trace: {ex.StackTrace}");
     }
     
-    logger.LogWarning("=== DATABASE MIGRATION COMPLETED ===");
+    migrationLogger.LogWarning("=== DATABASE MIGRATION COMPLETED ===");
 }
 
-logger.LogWarning("=== CALLING app.Run() - HTTP SERVER STARTING ===");
+finalLogger.LogWarning("=== CALLING app.Run() - HTTP SERVER STARTING ===");
 app.Run();
-logger.LogWarning("=== app.Run() RETURNED - APPLICATION STOPPED ===");
