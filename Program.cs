@@ -31,6 +31,31 @@ builder.Services.AddSingleton<TimeService>();
 
 var app = builder.Build();
 
+// Log startup information
+var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
+startupLogger.LogWarning("=== APPLICATION STARTING ===");
+startupLogger.LogWarning($"Environment: {app.Environment.EnvironmentName}");
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connString))
+{
+    try
+    {
+        var csBuilder = new Npgsql.NpgsqlConnectionStringBuilder(connString);
+        startupLogger.LogWarning($"DB Host: {csBuilder.Host}");
+        startupLogger.LogWarning($"DB Port: {csBuilder.Port}");
+        startupLogger.LogWarning($"DB Name: {csBuilder.Database}");
+        startupLogger.LogWarning($"DB User: {csBuilder.Username}");
+    }
+    catch (Exception ex)
+    {
+        startupLogger.LogError(ex, "Failed to parse connection string");
+    }
+}
+else
+{
+    startupLogger.LogError("Connection string is NULL or EMPTY!");
+}
+
 // Configure forwarded headers (important for reverse proxy)
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -105,54 +130,81 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+var finalLogger = app.Services.GetRequiredService<ILogger<Program>>();
+finalLogger.LogWarning("=== ROUTING CONFIGURED, STARTING APPLICATION ===");
+
 // Apply migrations automatically on startup
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
+    
+    logger.LogWarning("=== DATABASE MIGRATION STARTING ===");
+    
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
         
-        logger.LogInformation("Testing database connection...");
+        logger.LogWarning("DbContext created successfully");
+        
         var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-        logger.LogInformation($"Connection string (masked): Host={new Npgsql.NpgsqlConnectionStringBuilder(connString).Host}, Database={new Npgsql.NpgsqlConnectionStringBuilder(connString).Database}");
+        logger.LogWarning($"Using connection string: {connString?.Substring(0, Math.Min(50, connString?.Length ?? 0))}...");
         
         // Wait for DB to be ready
         var canConnect = false;
         for (int i = 0; i < 10; i++)
         {
+            logger.LogWarning($"Connection attempt {i + 1}/10...");
             try
             {
                 if (context.Database.CanConnect())
                 {
                     canConnect = true;
-                    logger.LogInformation("Database connection successful!");
+                    logger.LogWarning("✓ Database connection SUCCESSFUL!");
                     break;
+                }
+                else
+                {
+                    logger.LogWarning($"CanConnect returned false on attempt {i + 1}");
                 }
             }
             catch (Exception ex)
             {
-                logger.LogWarning($"Connection attempt {i + 1}/10 failed: {ex.Message}");
+                logger.LogError(ex, $"✗ Connection attempt {i + 1}/10 FAILED: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    logger.LogError($"Inner exception: {ex.InnerException.Message}");
+                }
             }
             System.Threading.Thread.Sleep(2000);
         }
         
         if (canConnect)
         {
-            logger.LogInformation("Applying migrations...");
+            logger.LogWarning("Applying migrations...");
             context.Database.Migrate();
-            logger.LogInformation("Migrations applied successfully.");
+            logger.LogWarning("✓ Migrations applied successfully!");
         }
         else
         {
-            logger.LogError("Could not connect to database after 10 attempts.");
+            logger.LogError("✗✗✗ Could not connect to database after 10 attempts ✗✗✗");
         }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        logger.LogError(ex, "✗✗✗ FATAL ERROR during database migration ✗✗✗");
+        logger.LogError($"Exception type: {ex.GetType().Name}");
+        logger.LogError($"Message: {ex.Message}");
+        if (ex.InnerException != null)
+        {
+            logger.LogError($"Inner exception: {ex.InnerException.Message}");
+        }
+        logger.LogError($"Stack trace: {ex.StackTrace}");
     }
+    
+    logger.LogWarning("=== DATABASE MIGRATION COMPLETED ===");
 }
 
+logger.LogWarning("=== CALLING app.Run() - HTTP SERVER STARTING ===");
 app.Run();
+logger.LogWarning("=== app.Run() RETURNED - APPLICATION STOPPED ===");
