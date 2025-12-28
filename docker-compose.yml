@@ -17,12 +17,8 @@ services:
     networks:
       - shared-net
 
-  # Local postgres service kept for local development/testing but disabled
-  # Remove or comment out this block if you only want to use the shared DB
   # Local postgres service removed — this app uses the shared-postgres instance
 
-volumes:
-  # No local postgres volume; using shared PostgreSQL on the host
 networks:
   shared-net:
     external: true
